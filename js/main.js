@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
       toggle.classList.remove('open');
       toggle.setAttribute('aria-expanded', 'false');
       document.body.classList.remove('nav-open');
+      links.querySelectorAll('.nav-dropdown.open').forEach(function (d) { d.classList.remove('open'); });
     };
     toggle.addEventListener('click', function () {
       var isOpen = links.classList.toggle('open');
@@ -30,6 +31,35 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && document.body.classList.contains('nav-open')) closeMenu();
+    });
+  }
+
+  // Grouped nav dropdowns ("Our Programs", "Research & Recognition", "Media") —
+  // CSS alone opens them on desktop :hover, but touch/keyboard needs an
+  // explicit toggle, so click support is added for every viewport width.
+  var dropdowns = document.querySelectorAll('.nav-dropdown');
+  if (dropdowns.length) {
+    var closeAllDropdowns = function (except) {
+      dropdowns.forEach(function (d) {
+        if (d === except) return;
+        d.classList.remove('open');
+        var t = d.querySelector('.nav-dropdown-trigger');
+        if (t) t.setAttribute('aria-expanded', 'false');
+      });
+    };
+    dropdowns.forEach(function (d) {
+      var trigger = d.querySelector('.nav-dropdown-trigger');
+      if (!trigger) return;
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = d.classList.toggle('open');
+        trigger.setAttribute('aria-expanded', String(isOpen));
+        closeAllDropdowns(d);
+      });
+    });
+    document.addEventListener('click', function () { closeAllDropdowns(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAllDropdowns();
     });
   }
 

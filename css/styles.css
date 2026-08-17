@@ -237,15 +237,18 @@ section{ padding:88px 0; }
 .brand-text{ display:flex; flex-direction:column; gap:2px; line-height:1.2; min-width:0; }
 .brand-text strong{ font-size:17px; color:var(--teal-900); font-weight:800; letter-spacing:-.01em; white-space:nowrap; }
 .brand-text span{ font-size:11.5px; color:var(--teal-700); font-weight:700; letter-spacing:.07em; text-transform:uppercase; }
-/* nav-menu is pinned to the right half of the header: it starts at the
-   container's horizontal middle and its content spreads out to the right edge */
-.nav-menu{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex:0 0 50%; }
-.nav-links{ display:flex; align-items:center; gap:8px; }
+/* nav-menu takes whatever width remains after the brand, rather than a
+   fixed 50% — a hard half-width cap left too little room once the nav
+   carried several multi-word grouped labels (e.g. "Research & Recognition"),
+   forcing pill text to wrap onto a second line instead of just sizing down. */
+.nav-menu{ display:flex; align-items:center; justify-content:flex-end; gap:16px; flex:1 1 auto; min-width:0; }
+.nav-links{ display:flex; align-items:center; gap:6px; }
 .nav-links a,
+.nav-dropdown-trigger,
 .nav-cta .btn{
   display:inline-flex; align-items:center; justify-content:center; gap:6px;
   height:36px; padding:0 14px; border-radius:999px; font-weight:700; font-size:13.5px; line-height:1;
-  color:var(--ink-700); box-sizing:border-box;
+  color:var(--ink-700); box-sizing:border-box; white-space:nowrap;
 }
 .nav-links a{ transition:background .15s ease, color .15s ease; }
 .nav-links a:hover{ background:var(--paper-200); color:var(--brand-900); }
@@ -259,6 +262,46 @@ section{ padding:88px 0; }
   position:absolute; top:-3px; right:-3px; width:9px; height:9px; border-radius:50%;
   background:var(--gold-400); box-shadow:0 0 0 2px #fff;
 }
+
+/* ---------- nav dropdown groups ("Our Programs", "Research & Recognition", "Media") ---------- */
+.nav-dropdown{ position:relative; }
+.nav-dropdown-trigger{
+  display:inline-flex; align-items:center; justify-content:center; gap:5px;
+  height:36px; padding:0 12px 0 14px; border-radius:999px; font-weight:700; font-size:13.5px; line-height:1;
+  color:var(--ink-700); box-sizing:border-box; background:none; border:none; cursor:pointer; font-family:inherit;
+  transition:background .15s ease, color .15s ease;
+}
+.nav-dropdown-trigger:hover{ background:var(--paper-200); color:var(--brand-900); }
+.nav-dropdown-trigger.active{ background:var(--brand-900); color:#fff; }
+.nav-dropdown-caret{ width:9px; height:9px; flex-shrink:0; transition:transform .18s ease; }
+.nav-dropdown:hover .nav-dropdown-caret,
+.nav-dropdown.open .nav-dropdown-caret{ transform:rotate(180deg); }
+/* top:100% with zero gap — a positional gap between trigger and menu (e.g.
+   calc(100% + 6px)) creates a dead zone the cursor crosses without hovering
+   either element, dropping :hover mid-transit and closing the menu before
+   a click can land. A transparent top border reproduces the old 6px of
+   breathing room as part of the element's own hoverable box instead. */
+.nav-dropdown-menu{
+  position:absolute; top:100%; left:0; min-width:230px;
+  border:1px solid var(--line); border-top:6px solid transparent; background-clip:padding-box;
+  background:#fff; border-radius:var(--radius-md); box-shadow:var(--shadow-lg);
+  padding:8px; display:flex; flex-direction:column; gap:2px;
+  opacity:0; pointer-events:none; transform:translateY(-6px); transition:opacity .16s ease, transform .16s ease;
+  z-index:1001;
+}
+.nav-dropdown-menu a{
+  display:flex; align-items:center; justify-content:flex-start; gap:10px;
+  height:auto; padding:9px 12px; border-radius:8px; font-weight:600; font-size:13.5px; line-height:1.3;
+  color:var(--ink-700); white-space:nowrap;
+}
+.nav-dropdown-menu a:hover{ background:var(--paper-200); color:var(--brand-900); }
+.nav-dropdown-menu a.active{ background:var(--wash-rose); color:var(--brand-900); }
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu,
+.nav-dropdown.open .nav-dropdown-menu{
+  opacity:1; pointer-events:auto; transform:translateY(0);
+}
+
 .nav-cta{ display:flex; align-items:center; gap:10px; }
 .nav-cta .btn{ padding:0 16px; font-size:13px; border-width:1.5px; }
 .nav-cta .btn-outline{ border-color:var(--brand-700); color:var(--brand-700); }
@@ -283,7 +326,7 @@ section{ padding:88px 0; }
 /* Selector needs to match ".nav-cta .btn"'s specificity (0,2,0) â€” a bare
    ".nav-contact-btn" (0,1,0) loses to that unconditional display:inline-flex
    above and silently never hides, regardless of this media query. */
-@media (max-width:1160px){ .nav-cta .nav-contact-btn{ display:none; } }
+@media (max-width:1180px){ .nav-cta .nav-contact-btn{ display:none; } }
 
 /* Mirror image of the rule above: this plain-nav-links "Contact Us" only
    exists so the mobile dropdown (and the 981â€“1160px tablet range, which had
@@ -293,15 +336,17 @@ section{ padding:88px 0; }
    avoid showing "Contact Us" twice. Specificity matches ".nav-links a"
    (0,1,1) for the same reason as above. */
 .nav-links a.nav-contact-link{ display:none; }
-@media (max-width:1160px){ .nav-links a.nav-contact-link{ display:inline-flex; } }
+@media (max-width:1180px){ .nav-links a.nav-contact-link{ display:inline-flex; } }
 
 /* Icons + quick-contact rows only exist for the mobile dropdown card â€” the
    desktop pill nav stays icon-free/minimal, so both are hidden by default
-   and switched on inside the â‰¤980px block below. */
+   and switched on inside the â‰¤1180px block below (raised from 980px now
+   that the nav carries 10 primary items â€” a horizontal pill bar stops
+   fitting well below that, even on laptop-width screens). */
 .nl-ic{ display:none; }
 .nav-links-contact{ display:none; }
 
-@media (max-width:980px){
+@media (max-width:1180px){
   .nav-wrap{ align-items:center; }
   .nav-menu{ align-items:center; flex:0 0 auto; }
   .nav-links{
@@ -317,6 +362,23 @@ section{ padding:88px 0; }
   .nav-links a.active .nl-ic,
   .nav-links a.nav-highlight .nl-ic{ opacity:1; }
   .nav-toggle{ display:flex; }
+
+  /* Dropdown groups become tap-to-expand accordions inside the mobile
+     panel — the desktop hover-flyout CSS above doesn't apply on touch, so
+     visibility is driven entirely by the JS-toggled .open class here. */
+  .nav-dropdown-trigger{
+    width:100%; height:auto; padding:14px 18px; justify-content:space-between; gap:12px; font-size:14.5px;
+  }
+  .nav-dropdown-trigger .nl-ic{ margin-right:0; }
+  .nav-dropdown-trigger.active{ background:var(--brand-900); color:#fff; }
+  .nav-dropdown-trigger.active .nl-ic{ opacity:1; }
+  .nav-dropdown-menu{
+    position:static; opacity:1; pointer-events:auto; transform:none;
+    background:transparent; border:none; box-shadow:none; padding:0; margin:0 0 0 14px;
+    max-height:0; overflow:hidden; transition:max-height .22s ease;
+  }
+  .nav-dropdown.open .nav-dropdown-menu{ max-height:260px; margin-top:2px; margin-bottom:4px; }
+  .nav-dropdown-menu a{ padding:12px 16px; }
   .brand-text span{ display:none; }
 
   /* Quick-contact rows â€” the phone/email topbar above the header is hidden
@@ -1517,7 +1579,7 @@ section{ padding:88px 0; }
 /* Dimmed backdrop behind the open mobile nav menu, toggled via body.nav-open
    (see main.js). Sits below the menu/header but above page content, and
    locks background scroll while the menu is open. */
-@media (max-width:980px){
+@media (max-width:1180px){
   body.nav-open{ overflow:hidden; }
   body.nav-open::after{
     content:""; position:fixed; inset:0; background:rgba(12,24,26,.45);
