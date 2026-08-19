@@ -207,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // Contact form (static demo — no backend wired up)
+  // Contact form — submits to FormBold via fetch so the page never leaves the site.
   var form = document.querySelector('.form form');
   if (form) {
     form.addEventListener('submit', function (e) {
@@ -215,9 +215,25 @@ document.addEventListener('DOMContentLoaded', function () {
       var btn = form.querySelector('button[type="submit"]');
       var label = btn.querySelector('.btn-text') || btn;
       var original = label.textContent;
-      label.textContent = 'Message sent — thank you!';
       btn.disabled = true;
-      setTimeout(function () { label.textContent = original; btn.disabled = false; form.reset(); }, 3200);
+      label.textContent = 'Sending…';
+
+      fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { Accept: 'application/json' }
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('Request failed');
+          label.textContent = 'Message sent — thank you!';
+          form.reset();
+        })
+        .catch(function () {
+          label.textContent = 'Something went wrong — please email us directly';
+        })
+        .finally(function () {
+          setTimeout(function () { label.textContent = original; btn.disabled = false; }, 3200);
+        });
     });
   }
 });
