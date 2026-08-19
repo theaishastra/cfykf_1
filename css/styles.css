@@ -367,9 +367,10 @@ section{ padding:88px 0; }
      panel — the desktop hover-flyout CSS above doesn't apply on touch, so
      visibility is driven entirely by the JS-toggled .open class here. */
   .nav-dropdown-trigger{
-    width:100%; height:auto; padding:14px 18px; justify-content:space-between; gap:12px; font-size:14.5px;
+    width:100%; height:auto; padding:14px 18px; justify-content:flex-start; gap:12px; font-size:14.5px;
   }
   .nav-dropdown-trigger .nl-ic{ margin-right:0; }
+  .nav-dropdown-trigger .nav-dropdown-caret{ margin-left:auto; }
   .nav-dropdown-trigger.active{ background:var(--brand-900); color:#fff; }
   .nav-dropdown-trigger.active .nl-ic{ opacity:1; }
   .nav-dropdown-menu{
