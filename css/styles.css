@@ -1312,6 +1312,12 @@ section{ padding:88px 0; }
 .trustee-card .role{ font-size:13px; color:var(--maroon-700); font-weight:700; margin-top:4px; }
 .trustee-card p{ margin-top:14px; font-size:14.5px; line-height:1.6; color:var(--ink-700); text-align:left; }
 .trustee-card .lr-fact{ margin-top:16px; }
+.tc-list{
+  display:flex; flex-direction:column; gap:10px; margin-top:14px; padding-left:20px;
+  font-size:14.5px; line-height:1.6; color:var(--ink-700); text-align:left;
+}
+.tc-list li{ padding-left:2px; }
+.tc-list strong{ color:var(--teal-900); }
 @media (max-width:900px){ .trustee-grid{ grid-template-columns:1fr; max-width:440px; margin:0 auto; } }
 .lr-fact{
   display:inline-flex; align-items:center; gap:7px; padding:7px 14px;
