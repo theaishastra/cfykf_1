@@ -502,7 +502,8 @@ section{ padding:88px 0; }
 .hero-badge-light .dot{ width:5px; height:5px; border-radius:50%; background:var(--gold-500); flex-shrink:0; }
 .hero-badge-light .hbl-ic{ width:16px; height:16px; color:var(--gold-500); flex-shrink:0; }
 .hero2 h1{ font-size:clamp(28px,3vw,40px); color:var(--teal-900); max-width:600px; }
-.hero2 h1 em{ font-style:normal; color:var(--gold-500); }
+.hero2-tagline{ margin-top:10px; font-size:clamp(17px,1.6vw,20px); color:var(--ink-700); max-width:600px; }
+.hero2-tagline em{ font-style:normal; color:var(--gold-500); }
 .h1-accent{ display:block; width:60px; height:4px; border-radius:3px; background:var(--gold-500); margin-top:14px; }
 .hero2 p.lead{ margin-top:14px; max-width:560px; font-size:16px; color:var(--ink-500); }
 .btn .btn-ic{
@@ -525,7 +526,7 @@ section{ padding:88px 0; }
      wrapper is always the last (and only other) child of .hero2-grid. */
   .hero2-grid > *:last-child{ order:-1; }
   .hero2-photo{ max-width:640px; margin:0 auto; width:100%; }
-  .hero2 h1,.hero2 p.lead{ max-width:100%; }
+  .hero2 h1,.hero2-tagline,.hero2 p.lead{ max-width:100%; }
 }
 
 /* ---------- hero2 photo overlays: floating stat card + circular badge ---------- */
